@@ -1,7 +1,39 @@
 {% extends "base.html" %}
-
-{% block title %}Notes{% endblock %}
+{% load static %}
 
 {% block content %}
-    <h1>Hello</h1>
+    <link rel="stylesheet" href="{% static 'notes/css/notes_grid.css' %}">    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <div class='d-flex justify-content-between align-items-center mb-4'>
+        <h2 class="my-3">Notes</h2>
+        <a class="btn btn-success btn-lg" href="{% url 'notes:note_create' %}"><i class="bi bi-plus-circle"></i> New note</a>
+    </div>
+
+    <div class="notes-grid">
+        {% for note in notes %}
+            <article class="note-card note-c{{ forloop.counter0|add:1|divisibleby:6 }}">
+                <div class="note-card__inner">
+                    <div class="note-card__content">
+                        <h4 class="note-card__title">{{ note.title }}</h4>
+                        <p class="note-card__text">{{ note.content }}</p>
+                    </div>
+
+                    <div class="note-card__footer">
+                        <span class="note-card__date">{{ note.created_at|date:'d M Y' }}</span>
+
+                        <div class="note-card__actions">
+                            <a class="note-card__btn" href="{% url 'notes:note_edit' note.id %}" title="Edit">✎</a>
+                            <form method="post" action="{% url 'notes:note_delete' note.id %}" class="note-card__form">
+                                {% csrf_token %}
+                                <button class="note-card__btn" type="submit" title="Delete">🗑</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+                <div class="alert alert-secondary">No notes</div>
+        {% endfor %}
+    </div>
 {% endblock %}

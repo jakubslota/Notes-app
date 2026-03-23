@@ -12,11 +12,11 @@
                 <a class="navbar-brand" href="{% url 'notes:notes_list' %}">NOTES APP</a>
                 <div class="ms-auto d-flex gap-2">
                     {% if user.is_authenticated %}
-                        <span class="navbar-text text-white-50">Witaj: {{ user.username }}</span>
+                        <span class="navbar-text text-white-50">Hi: {{ user.username }}</span>
 
                         <form method="post" action="{% url 'notes:logout' %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-light mx-2">Wyloguj</button>
+                            <button type="submit" class="btn btn-outline-light mx-2">Logout</button>
                         </form>
                         {% endif %}
                 </div>
