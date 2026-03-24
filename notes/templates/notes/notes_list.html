@@ -3,11 +3,61 @@
 
 {% block content %}
     <link rel="stylesheet" href="{% static 'notes/css/notes_grid.css' %}">    
+    <link rel="stylesheet" href="{% static 'notes/css/filters.css' %}">    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <div class='d-flex justify-content-between align-items-center mb-4'>
         <h2 class="my-3">Notes</h2>
         <a class="btn btn-success btn-lg" href="{% url 'notes:note_create' %}"><i class="bi bi-plus-circle"></i> New note</a>
+    </div>
+
+    <form method="get" id="filtersForm" class="filters-panel mb-4">
+        <div class="filters-panel__inner">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-lg-5">
+                    <label class="form-label mb-1">Search (title or content)</label>
+                    <input
+                    type="text"
+                    name="q"
+                    value="{{ filters.q }}"
+                    class="form-control"
+                    placeholder="Enter phrase..."
+                    autocomplete="off"
+                    >
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <label class="form-label mb-1">From</label>
+                    <input type="date" name="from" value="{{ filters.from }}" class="form-control">
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <label class="form-label mb-1">To</label>
+                    <input type="date" name="to" value="{{ filters.to }}" class="form-control">
+                </div>
+
+                <div class="col-12 col-lg-2">
+                    <label class="form-label mb-1">Sort</label>
+                    <select name="sort" class="form-select">
+                        <option value="new" {% if filters.sort == 'new' %}selected{% endif %}>Latest</option>
+                        <option value="old" {% if filters.sort == 'old' %}selected{% endif %}>Oldest</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-lg-1 d-grid">
+                    <a class="btn btn-outline-secondary" href="{% url 'notes:notes_list' %}">Reset</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="filters-chip">
+            Results: <strong>{{ notes|length }}</strong>
+            {% if filters.q or filters.from or filters.to  %}
+                <span class="filters-chip__muted">Active filters</span>
+            {% endif %}
+        </div>
     </div>
 
     <div class="notes-grid">
@@ -36,4 +86,46 @@
                 <div class="alert alert-secondary">No notes</div>
         {% endfor %}
     </div>
+
+<script>
+  (function () {
+    const form = document.getElementById("filtersForm");
+    if (!form) return;
+
+    const qInput = form.querySelector('input[name="q"]');
+    const fromInput = form.querySelector('input[name="from"]');
+    const toInput = form.querySelector('input[name="to"]');
+    const sortSelect = form.querySelector('select[name="sort"]');
+
+    let t = null;
+
+    const submitDebounced = (delay) => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        // jeśli user dalej ma fokus w polu wyszukiwania, nie submituj
+        if (document.activeElement === qInput) return;
+        form.submit();
+      }, delay);
+    };
+
+    // Search: nie wysyłaj w trakcie pisania, dopiero po chwili i po utracie fokusu
+    if (qInput) {
+      qInput.addEventListener("input", () => submitDebounced(800));
+      qInput.addEventListener("blur", () => submitDebounced(0));   // jak wyjdzie z pola, od razu filtruj
+      qInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          form.submit();
+        }
+      });
+    }
+
+    // Date + sort: zmiana = od razu filtruj
+    [fromInput, toInput, sortSelect].forEach(el => {
+      if (!el) return;
+      el.addEventListener("change", () => form.submit());
+    });
+  })();
+</script>
+
 {% endblock %}

@@ -1,0 +1,49 @@
+.filters-panel {
+  margin-bottom: 22px;
+}
+
+/* kompaktowy panel, bez nachodzenia na navbar */
+.filters-panel__inner {
+  border-radius: 16px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}
+
+.filters-panel label {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.filters-panel .form-control,
+.filters-panel .form-select {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.filters-panel .form-control:focus,
+.filters-panel .form-select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+  border-color: rgba(13, 110, 253, 0.35);
+}
+
+.filters-panel .btn {
+  border-radius: 12px;
+}
+
+/* results chip */
+.filters-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.filters-chip__muted {
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
