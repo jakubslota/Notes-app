@@ -66,7 +66,7 @@ def note_edit(request, pk, template_name='notes/note_form.html'):
     if request.method == 'POST':
         form = NoteForm(request.POST, instance=note)
         if form.is_valid():
-            note.save()
+            form.save()
             return redirect('notes:notes_list')
     else:
         form = NoteForm(instance=note)
